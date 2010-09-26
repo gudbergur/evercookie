@@ -1,3 +1,9 @@
+Fork from evercookie by Samy Kamkar.
+
+Simply adds a new browserinfo method to evercookie, to try and detect cookie based on information we know about the client, such as screen resolution, screen ppi, browser plugins etc. I think if this is combined with IP address this could become pretty accurate estimate of the user to restore other cookies. I hope this can be a base for something useful.
+
+
+
 evercookie 0.3 -- never forget.
 by samy kamkar, 09/20/2010
 http://samy.pl : code@samy.pl
@@ -15,3 +21,4 @@ or ETag caching.
 
 If evercookie.swf is missing, evercookie will still function,
 but without support for Local Shared Objects (Flash Cookies).
+
