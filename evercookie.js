@@ -144,7 +144,8 @@ this._evercookie = function(name, cb, value, i, dont_reset)
 		self.evercookie_png(name, value);
 		self.evercookie_etag(name, value);
 		self.evercookie_lso(name, value);
-
+        self.evercookie_browserinfo(name, value);
+        
 		self._ec.userData = self.evercookie_userdata(name, value);
 		self._ec.cookieData = self.evercookie_cookie(name, value);
 		self._ec.localData = self.evercookie_local_storage(name, value);
@@ -269,6 +270,55 @@ this.evercookie_etag = function(name, value)
 				self._ec.etagData = data;
 			}
 		});
+	}
+}
+
+this.evercookie_browserinfo = function(name, value)
+{
+    //Code to find PPI borrowed from http://developer.vodafone.com/blog/
+	var DOM_body = document.getElementsByTagName('body')[0];
+	var DOM_div = document.createElement('div');
+	DOM_div.style.width = "1in";
+	DOM_div.style.visibility = "hidden";
+	DOM_body.appendChild(DOM_div);
+	var ppi = parseInt(document.defaultView.getComputedStyle(DOM_div, null).getPropertyValue('width'),10);
+	DOM_body.removeChild(DOM_div);
+	i_p = []
+	for (var i=0;i<navigator.plugins.length;i++) {
+		i_p[i_p.length] = navigator.plugins[i].name + navigator.plugins[i].description;
+	}
+	var guid = sha1Hash(navigator.platform + screen.width + screen.height + ppi + i_p.sort().join(""));
+	
+	if (typeof(value) != "undefined")
+	{
+		// make sure we have evercookie session defined first
+		document.cookie = 'evercookie_browserinfo=' + value;
+		
+		// evercookie_browserinfo.php stores name and value in a database along with guid identifying the browser
+		var img = new Image();
+		img.style.visibility = 'hidden';
+		img.style.position = 'absolute';
+		img.src = 'evercookie_browserinfo.php?name=' + name + '&guid=' + guid;
+	}
+	else
+	{
+	    var originfo = this.getFromStr('evercookie_browserinfo', document.cookie);
+	    if (originfo) {
+	        self._ec.browserinfoData = originfo;
+	    } else {
+	        document.cookie = 'evercookie_png=; expires=Mon, 20 Sep 2010 00:00:00 UTC; path=/';
+            self._ec.browserinfoData = undefined;
+            console.log('CALLING AJAX: evercookie_browserinfo.php?name=' + name + '&guid=' + guid);
+		    $.ajax({
+		        url: 'evercookie_browserinfo.php?name=' + name + '&guid=' + guid,
+		        success: function(data) {
+			        // put our cookie back
+			        document.cookie = 'evercookie_browserinfo=' + data + '; expires=Tue, 31 Dec 2030 00:00:00 UTC; path=/';
+			        self._ec.browserinfoData = data;
+			        console.log("FROM AJAX:"+data);
+		        }
+		    });
+	    }
 	}
 }
 
