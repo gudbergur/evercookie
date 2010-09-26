@@ -1,7 +1,12 @@
-Fork from evercookie by Samy Kamkar.
+A fork from evercookie by Samy Kamkar.
 
-Simply adds a new browserinfo method to evercookie, to try and detect cookie based on information we know about the client, such as screen resolution, screen ppi, browser plugins etc. I think if this is combined with IP address this could become pretty accurate estimate of the user to restore other cookies. I hope this can be a base for something useful.
+The idea is to add a new "browserinfo" method to evercookie. The method creates a guid string from SHA-1 hashing various information about the client. This is information such as browser plugins (which are different between browsers and make this method not work cross browsers), screen resolution, screen ppi etc. It takes this guid and sends it to a server script (evercookie_browserinfo.php), which stores it on there server along with cookie name and value. If the cookie for the method is deleted it will restore it based on the guid.
 
+Note that I haven't tested how unique this information is to each computer, so maybe this method doesn't work at all but I thought it was worth the shot... What could improve this is more info that can be gathered about the client and then of course combine this with the client's IP address.
+
+If this works, and my guess is that this information is remarkably unique to each computer, than this will make evercookie survive even Chrome Incognito with a clearing of browser data.
+
+- Gudbergur
 
 
 evercookie 0.3 -- never forget.
